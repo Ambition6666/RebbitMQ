@@ -3,7 +3,6 @@ package mymq
 import (
 	"context"
 	"fmt"
-	"log"
 
 	mq "github.com/rabbitmq/amqp091-go"
 )
@@ -57,7 +56,7 @@ func (r *MyRabbitMQ) PublishSimple(message string) {
 }
 
 // simple 模式下消费者
-func (r *MyRabbitMQ) ConsumeSimple() {
+func (r *MyRabbitMQ) ConsumeSimple() <-chan mq.Delivery {
 	//1.申请队列，如果队列不存在会自动创建，存在则跳过创建
 	q, err := r.channel.QueueDeclare(
 		r.QueueName,
@@ -95,16 +94,16 @@ func (r *MyRabbitMQ) ConsumeSimple() {
 		fmt.Println(err)
 	}
 
-	forever := make(chan bool)
-	//启用协程处理消息
-	go func() {
-		for d := range msgs {
-			//消息逻辑处理，可以自行设计逻辑
-			log.Printf("Received a message: %s", d.Body)
+	// forever := make(chan bool)
+	// //启用协程处理消息
+	// go func() {
+	// 	for d := range msgs {
+	// 		//消息逻辑处理，可以自行设计逻辑
+	// 		log.Printf("Received a message: %s", d.Body)
+	// 	}
+	// }()
 
-		}
-	}()
-
-	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
-	<-forever
+	// log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
+	// <-forever
+	return msgs
 }
