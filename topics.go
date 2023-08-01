@@ -2,6 +2,7 @@ package mymq
 
 import (
 	"context"
+	"log"
 
 	mq "github.com/rabbitmq/amqp091-go"
 )
@@ -48,7 +49,7 @@ func (r *MyRabbitMQ) PublishTopic(message string) {
 // 要注意key,规则
 // 其中“*”用于匹配一个单词，“#”用于匹配多个单词（可以是零个）
 // 匹配 kuteng.* 表示匹配 kuteng.hello, kuteng.hello.one需要用kuteng.#才能匹配到
-func (r *MyRabbitMQ) RecieveTopic() <-chan mq.Delivery {
+func (r *MyRabbitMQ) RecieveTopic() {
 	//1.试探性创建交换机
 	err := r.channel.ExchangeDeclare(
 		r.Exchange,
@@ -84,7 +85,7 @@ func (r *MyRabbitMQ) RecieveTopic() <-chan mq.Delivery {
 	)
 	r.failOnErr(err, "Failed to bind queue")
 	//消费消息
-	messges, err := r.channel.Consume(
+	msgs, err := r.channel.Consume(
 		q.Name,
 		"",
 		true,
@@ -94,5 +95,16 @@ func (r *MyRabbitMQ) RecieveTopic() <-chan mq.Delivery {
 		nil,
 	)
 	r.failOnErr(err, "Failed to recive a message")
-	return messges
+	forever := make(chan bool)
+	//启用协程处理消息
+	go func() {
+		for d := range msgs {
+			//消息逻辑处理，可以自行设计逻辑
+			log.Printf("Received a message: %s", d.Body)
+
+		}
+	}()
+
+	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
+	<-forever
 }
