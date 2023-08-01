@@ -1,4 +1,4 @@
-module Mymq
+module github.com/Ambition6666/coderzh.github.io
 
 go 1.20
 
