@@ -2,7 +2,6 @@ package mymq
 
 import (
 	"context"
-	"log"
 
 	mq "github.com/rabbitmq/amqp091-go"
 )
@@ -46,7 +45,7 @@ func (r *MyRabbitMQ) PublishRouting(message string) {
 }
 
 // 路由模式接受消息
-func (r *MyRabbitMQ) RecieveRouting() {
+func (r *MyRabbitMQ) RecieveRouting() <-chan mq.Delivery {
 	//1.试探性创建交换机
 	err := r.channel.ExchangeDeclare(
 		r.Exchange,
@@ -92,16 +91,5 @@ func (r *MyRabbitMQ) RecieveRouting() {
 		nil,
 	)
 	r.failOnErr(err, "Failed to recive a message")
-	forever := make(chan bool)
-	//启用协程处理消息
-	go func() {
-		for d := range messges {
-			//消息逻辑处理，可以自行设计逻辑
-			log.Printf("Received a message: %s", d.Body)
-
-		}
-	}()
-
-	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
-	<-forever
+	return messges
 }
