@@ -29,7 +29,7 @@ func (r *MyRabbitMQ) PublishSimple(message string) {
 	q, err := r.channel.QueueDeclare(
 		r.QueueName,
 		//是否持久化
-		true,
+		false,
 		//是否自动删除
 		false,
 		//是否具有排他性
@@ -62,7 +62,7 @@ func (r *MyRabbitMQ) ConsumeSimple() {
 	q, err := r.channel.QueueDeclare(
 		r.QueueName,
 		//是否持久化
-		true,
+		false,
 		//是否自动删除
 		false,
 		//是否具有排他性
