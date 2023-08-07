@@ -7,7 +7,7 @@ import (
 	mq "github.com/rabbitmq/amqp091-go"
 )
 
-var Url string = "amqp://guest:guest@localhost:5672/"
+var Url string
 
 type MyRabbitMQ struct {
 	conn    *mq.Connection
@@ -20,6 +20,10 @@ type MyRabbitMQ struct {
 	Key string
 	//连接信息
 	Mqurl string
+}
+
+func InitMqConfig(username string, pwd string, host string, port string) {
+	Url = fmt.Sprintf("amqp://%s:%s@%s:%s/", username, pwd, host, port)
 }
 
 // 创建结构体实例
