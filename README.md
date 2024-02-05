@@ -1,4 +1,4 @@
-# coderzh.github.io
+# RabbitMQ
 ```go
 //先初始化下mq用户名,密码,ip地址,端口
 //调用InitMqConfig
